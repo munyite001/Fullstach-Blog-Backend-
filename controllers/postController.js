@@ -1,10 +1,10 @@
 const asyncHandler = require('express-async-handler');
-const Post = require('./models/post')
-const User = require('./models/user')
-const Comment = require('./models/comment')
+const Post = require('../models/post')
+const User = require('../models/user')
+const Comment = require('../models/comment')
 
 //  Middleware
-const { verifyToken, checkAdmin } = require('./middleware/middleware')
+const { verifyToken, checkAdmin } = require('../middleware/middleware')
 
 /// POST ROUTES ///
 

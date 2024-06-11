@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
-
-const { verifyToken, checkAdmin } = require('../middleware/middleware')
+const passport = require('../config/passport')
+const { verifyToken, checkAdmin, checkAdminOrSelf } = require('../middleware/middleware')
 
 // Require controller modules.
 const postController = require('../controllers/postController')
@@ -12,7 +12,7 @@ const userController = require('../controllers/userController')
 /// POST ROUTES ///
 
 // GET request for list of all posts.
-router.get('/posts', checkAdmin, verifyToken, postController.all_posts)
+router.get('/posts', verifyToken, checkAdmin, postController.all_posts)
 
 // GET request for list of all published posts.
 router.get('/posts/published', postController.all_posts_published)
@@ -21,13 +21,46 @@ router.get('/posts/published', postController.all_posts_published)
 router.get('/posts/:id', postController.post_detail)
 
 //  POST request to create a post.
-router.post('/posts', checkAdmin, verifyToken, postController.post_create)
+router.post('/posts', verifyToken, checkAdmin, postController.post_create)
 
 //  PUT request to update a post.
-router.put('/posts/:id', checkAdmin, verifyToken, postController.post_update)
+router.put('/posts/:id', verifyToken, checkAdmin, postController.post_update)
 
 //  DELETE request to delete a post.
-router.delete('/posts/:id', checkAdmin, verifyToken, postController.post_delete)
+router.delete('/posts/:id', verifyToken, checkAdmin, postController.post_delete)
 
 //  POST request to create a comment.
-router.post('/posts/:id/comment', verifyToken, commentController.comment_create)
+router.post('/posts/:id/comment', verifyToken, postController.add_comment)
+
+
+/// COMMENT ROUTES ///
+
+//  PUT request to update a comment.
+router.put('/posts/:postId/comment/:commentId', verifyToken, commentController.update_comment)
+
+//  DELETE request to delete a comment.
+router.delete('/posts/:postId/comment/:commentId', verifyToken, commentController.delete_comment)
+
+
+/// USER ROUTES ///
+
+//  GET request for list of all users.
+router.get('/users', verifyToken, checkAdmin, userController.users_list)
+
+//  GET request for one user.
+router.get('/users/:id', verifyToken, userController.user_detail)
+
+
+//  POST request to register a new user.
+router.post('/users/register', userController.user_registration)
+
+//  POST request to login a user.
+router.post('/users/login', userController.user_login)
+
+// PUT request to update a user.
+router.put('/users/:id', verifyToken, checkAdminOrSelf, userController.user_update)
+
+//  DELETE request to delete a user.
+router.delete('/users/:id', verifyToken, checkAdminOrSelf, userController.user_delete)
+
+module.exports = router
