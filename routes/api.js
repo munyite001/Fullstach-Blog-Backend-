@@ -32,6 +32,9 @@ router.delete('/posts/:id', verifyToken, checkAdmin, postController.post_delete)
 //  POST request to create a comment.
 router.post('/posts/:id/comment', verifyToken, postController.add_comment)
 
+//  Fetch stats about the database
+router.get('/stats', verifyToken, checkAdmin, postController.get_stats)
+
 
 /// COMMENT ROUTES ///
 
@@ -56,6 +59,9 @@ router.post('/users/register', userController.user_registration)
 
 //  POST request to login a user.
 router.post('/users/login', userController.user_login)
+
+//  POST request for admin login
+router.post('/admin/login', userController.admin_login)
 
 // PUT request to update a user.
 router.put('/users/:id', verifyToken, checkAdminOrSelf, userController.user_update)

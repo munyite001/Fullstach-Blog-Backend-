@@ -32,6 +32,7 @@ exports.post_detail = asyncHandler(async (req, res, next) => {
 })
 //  Create a post //
 exports.post_create = asyncHandler(async (req, res, next) => {
+    console.log('Received request to create post:', req.body);
     const post = new Post({
         title: req.body.title,
         content: req.body.content,
@@ -39,8 +40,14 @@ exports.post_create = asyncHandler(async (req, res, next) => {
         banner_image: req.body.banner_image,
     })
 
-    await post.save()
-    res.json({message: 'Post created successfully'})
+    try {
+        const savedPost = await post.save()
+        console.log('Post saved:', savedPost);
+        res.status(201).json({message: 'Post created successfully', post: savedPost})
+    } catch (error) {
+        console.error('Error saving post:', error);
+        res.status(500).json({message: 'Error creating post', error: error.message})
+    }
 })
 
 //  Update a post //
@@ -66,9 +73,9 @@ exports.post_update = asyncHandler(async (req, res, next) => {
 exports.post_delete = asyncHandler(async (req, res, next) => {
     await Post.findByIdAndDelete(req.params.id).exec()
 
-    if (!post) {
-        res.status(404).json({message: 'Post not found' });
-    }
+    // if (!post) {
+    //     res.status(404).json({message: 'Post not found' });
+    // }
 
     res.json({message: 'Post deleted successfully'})
 })
@@ -94,3 +101,19 @@ exports.add_comment = asyncHandler(async (req, res, next) => {
     res.json({message: 'Comment added successfully'});
 });
 
+
+// Stats about the database
+exports.get_stats = asyncHandler(async (req, res, next) => {
+    try {
+        const stats = {
+            totalPosts: await Post.countDocuments({}).exec(),
+            totalUsers: await User.countDocuments({}).exec(),
+            totalComments: await Comment.countDocuments({}).exec()
+        };
+        
+        res.json(stats);
+    } catch (error) {
+        console.log('Error fetching stats(backend):', error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});

@@ -39,7 +39,7 @@ exports.user_registration = asyncHandler(async (req, res, next) => {
     const user = new User({
         username,
         email,
-        password: hashedPassword
+        password: hashedPassword,
     })
 
     //  Save the user to the database
@@ -64,10 +64,38 @@ exports.user_login = asyncHandler(async (req, res, next) => {
         res.status(400).json({message: 'Invalid credentials'})
     }
 
-    const token = jwt.sign({id: user._id, is_admin: user.is_admin}, process.env.JWT_SECRET, {expiresIn: '1h'});
+    const token = jwt.sign({id: user._id, is_admin: user.is_admin}, process.env.TOKEN_SECRET, {expiresIn: '1h'});
 
     res.json({
         token    
+    })
+})
+
+exports.admin_login = asyncHandler(async (req, res, next) => {
+    const { username, password } = req.body;
+
+    //  Check if the user exists
+    const user = await User.findOne({ username })
+
+    if (!user) {
+        res.status(400).json({message: "Invalid Credentials"})
+    }
+
+    // Check if the user is an admin
+    if (!user.is_admin) {
+        return res.status(403).json({ message: 'Access denied' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password)
+
+    if (!isMatch) {
+        res.status(400).json({message: 'Invalid Credentials'})
+    }
+
+    const token = jwt.sign({id: user._id, is_admin: user.is_admin}, process.env.TOKEN_SECRET, {expiresIn: '1h'});
+
+    res.json({
+        token
     })
 })
 

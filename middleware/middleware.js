@@ -18,15 +18,33 @@ const passport = require('../config/passport');
 //     }
 // }
 
-const verifyToken = passport.authenticate('jwt', { session: false });
+// const verifyToken = passport.authenticate('jwt', { session: false });
 
-//  Middleware to check if the user is an admin
-const checkAdmin = (req, res, next) => {
-    if (!req.user.is_admin) {
-        return res.status(403).send('Admin access required');
-        next();
+const verifyToken = (req, res, next) => {
+    const token = req.headers['authorization'];
+    console.log(token);
+    if (!token) {
+        return res.status(401).json({ message: 'Access Denied. No token provided.' });
     }
-}
+
+    try {
+        const decoded = jwt.verify(token.split(" ")[1], process.env.TOKEN_SECRET);
+        req.user = decoded;
+        console.log("Decoded User: ", decoded)
+        next();
+    } catch (err) {
+        return res.status(401).json({ message: 'Access Denied. Invalid token.' });
+    }
+};
+
+const checkAdmin = (req, res, next) => {
+
+    if (!req.user || !req.user.is_admin) {
+        return res.status(403).send('Admin access required');
+    }
+    next();
+};
+
 
 
 // Middleware to check if the user is the account owner or an admin
