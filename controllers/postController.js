@@ -2,6 +2,7 @@ const asyncHandler = require('express-async-handler');
 const Post = require('../models/post')
 const User = require('../models/user')
 const Comment = require('../models/comment')
+const Tag = require('../models/tag')
 
 //  Middleware
 const { verifyToken, checkAdmin } = require('../middleware/middleware')
@@ -38,6 +39,7 @@ exports.post_create = asyncHandler(async (req, res, next) => {
         content: req.body.content,
         tags: req.body.tags,
         banner_image: req.body.banner_image,
+        published: req.body.published,
     })
 
     try {
@@ -62,6 +64,7 @@ exports.post_update = asyncHandler(async (req, res, next) => {
     post.content = req.body.content;
     post.tags = req.body.tags;
     post.banner_image = req.body.banner_image;
+    post.published = req.body.published;
     post.updated_at = Date.now();
 
     await post.save()
@@ -117,3 +120,15 @@ exports.get_stats = asyncHandler(async (req, res, next) => {
         res.status(500).json({ message: 'Internal Server Error' });
     }
 });
+
+
+//  Get all tags
+exports.get_tags = asyncHandler(async (req, res, next) => {
+    try {
+        const allTags = await Tag.find({}).exec();
+
+        res.json(allTags)
+    } catch (err) {
+        res.status(500).json({message: 'Error Fetching tags'})
+    }
+})

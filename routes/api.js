@@ -35,6 +35,9 @@ router.post('/posts/:id/comment', verifyToken, postController.add_comment)
 //  Fetch stats about the database
 router.get('/stats', verifyToken, checkAdmin, postController.get_stats)
 
+//  Fetch all tags
+router.get('/tags', verifyToken, checkAdmin, postController.get_tags)
+
 
 /// COMMENT ROUTES ///
 
