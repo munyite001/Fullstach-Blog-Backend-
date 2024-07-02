@@ -47,6 +47,9 @@ router.put('/posts/:postId/comment/:commentId', verifyToken, commentController.u
 //  DELETE request to delete a comment.
 router.delete('/posts/:postId/comment/:commentId', verifyToken, commentController.delete_comment)
 
+//  Fetch all Comments
+router.get("/comments", verifyToken, checkAdmin, commentController.get_all_comments)
+
 
 /// USER ROUTES ///
 
@@ -71,5 +74,6 @@ router.put('/users/:id', verifyToken, checkAdminOrSelf, userController.user_upda
 
 //  DELETE request to delete a user.
 router.delete('/users/:id', verifyToken, checkAdminOrSelf, userController.user_delete)
+
 
 module.exports = router
