@@ -29,6 +29,9 @@ router.put('/posts/:id', verifyToken, checkAdmin, postController.post_update)
 //  DELETE request to delete a post.
 router.delete('/posts/:id', verifyToken, checkAdmin, postController.post_delete)
 
+//  Feature a post
+router.put('/posts/:id/feature', verifyToken, checkAdmin, postController.set_featured)
+
 //  POST request to create a comment.
 router.post('/posts/:id/comment', verifyToken, postController.add_comment)
 

@@ -129,3 +129,26 @@ exports.get_tags = asyncHandler(async (req, res, next) => {
         res.status(500).json({message: 'Error Fetching tags'})
     }
 })
+
+exports.set_featured = asyncHandler(async (req, res, next) => {
+    const { id } = req.params;
+    const post = await Post.findById(req.params.id).exec();
+
+    try {
+        //  Unfeature all posts
+        await Post.updateMany({featured: true}, {$set: {featured: false}})
+
+        //  Set the specific post to featured
+        const post = await Post.findByIdAndUpdate(id, { $set: { featured: true } }, { new: true });
+    
+        if (!post) {
+            return res.status(404).json({ message: 'Post not found' });
+        }
+    
+        res.json(post);
+
+    } catch(err) {
+        console.error(err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+})
