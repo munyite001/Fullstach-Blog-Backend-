@@ -4,9 +4,6 @@ const User = require('../models/user')
 const Comment = require('../models/comment')
 const Tag = require('../models/tag')
 
-//  Middleware
-const { verifyToken, checkAdmin } = require('../middleware/middleware')
-
 /// POST ROUTES ///
 
 

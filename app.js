@@ -4,6 +4,7 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
 var logger = require('morgan');
 var cors = require('cors')
 
@@ -28,7 +29,9 @@ async function main() {
   await mongoose.connect(mongoDB)
 }
 
-
+//  Increase payload size
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
