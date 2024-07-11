@@ -35,6 +35,9 @@ router.put('/posts/:id/feature', verifyToken, checkAdmin, postController.set_fea
 //  POST request to create a comment.
 router.post('/posts/:id/comment', verifyToken, postController.add_comment)
 
+//  GET request to fetch all comments of a particular post
+router.get("/posts/:id/comments", postController.get_all_post_comments)
+
 //  Fetch stats about the database
 router.get('/stats', verifyToken, checkAdmin, postController.get_stats)
 
