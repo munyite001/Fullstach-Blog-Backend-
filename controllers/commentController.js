@@ -72,6 +72,5 @@ exports.delete_comment = asyncHandler(async (req, res, next) => {
 //  Fetch all comments
 exports.get_all_comments = asyncHandler(async (req, res, next) => {
     const all_comments = await Comment.find({}).populate("user").exec()
-
     res.json(all_comments);
 })
